@@ -20,12 +20,12 @@ type Token struct {
   ExpiresAt int64  `json:"expires_at"`
 }
 
-// 设置 copilot token 到缓存
+// Setting the Copilot token in the cache.
 func setTokenToCache(githubToken string, copilotToken Token) {
   tokens[githubToken] = copilotToken
 }
 
-// 从缓存中获取 copilot token
+// Obtaining the Copilot token from the cache.
 func getTokenFromCache(githubToken string) *Token {
   extraTime := rand.Intn(600) + 300
   if token, ok := tokens[githubToken]; ok {
@@ -36,7 +36,7 @@ func getTokenFromCache(githubToken string) *Token {
   return &Token{}
 }
 
-// 在获取 copilot token 时，先从缓存中获取，如果未获取到，再通过 HTTP 请求获取，并设置缓存
+// When obtaining the Copilot token, first attempt to retrieve it from the cache. If it is not available in the cache, retrieve it through an HTTP request and then set it in the cache.
 func getCopilotToken(c *gin.Context, githubToken string) {
   token := getTokenFromCache(githubToken)
   if token.Token == "" {
@@ -62,7 +62,7 @@ func getCopilotToken(c *gin.Context, githubToken string) {
   config.CoToken = token.Token
 }
 
-// 从请求头部获取 github token
+// Retrieve the GitHub token from the request header.
 func GetGithubTokens(c *gin.Context) {
   githubToken := strings.TrimPrefix(c.GetHeader("Authorization"), "Bearer ")
   if githubToken == "" {
@@ -71,6 +71,6 @@ func GetGithubTokens(c *gin.Context) {
     })
     return
   }
-  // 从 github token 获取 copilot token
+  // Obtain the Copilot token from the GitHub token.
   getCopilotToken(c, githubToken)
 }

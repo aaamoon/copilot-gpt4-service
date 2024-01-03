@@ -2,22 +2,22 @@ FROM golang:latest AS builder
 
 WORKDIR /app
 
-# 复制应用程序代码
+# Duplicate the application code.
 COPY . .
 
-# 构建应用程序
+# Construct the application.
 RUN CGO_ENABLED=0 GOOS=linux go build -o myapp .
 
-# 第二阶段：运行阶段
+# Second phase: Execution phase.
 FROM alpine:latest
 
 WORKDIR /app
 
-# 从第一阶段复制构建好的二进制文件
+# Duplicate the built binary file from the first phase.
 COPY --from=builder /app/myapp .
 
-# 暴露应用程序需要的端口
+# Expose the necessary ports required by the application.
 EXPOSE 8080
 
-# 运行应用程序
+# Execute the application.
 CMD ["./myapp"]
