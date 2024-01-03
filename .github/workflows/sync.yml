@@ -8,7 +8,7 @@ on:
 env:
   SOURCE_REPO: "aaamoon/copilot-gpt4-service"
   SOURCE_BRANCH: "master"
-  TARGET_BRANCH: "master"
+  TARGET_BRANCH: "origin"
 
 jobs:
   sync:
