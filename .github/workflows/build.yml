@@ -3,7 +3,7 @@ on:
   push:
   workflow_dispatch:
   schedule:
-    - cron: '0 0 * * *'
+    - cron: '5 0 * * *'
 env:
   IMAGE_REPOSITORY: funnyzak/copilot-gpt4-service
 

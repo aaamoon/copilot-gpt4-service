@@ -1,0 +1,29 @@
+name: Sync Fork
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '0 0 * * *'
+
+env:
+  SOURCE_REPO: "aaamoon/copilot-gpt4-service"
+  SOURCE_BRANCH: "master"
+  TARGET_BRANCH: "master"
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          fetch-depth: 0
+
+      - name: Sync fork
+        uses: repo-sync/github-sync@v2
+        with:
+          source_repo: ${{ env.SOURCE_REPO }}
+          source_branch: ${{ env.SOURCE_BRANCH }}
+          destination_branch: ${{ env.TARGET_BRANCH }}
+          github_token: ${{ secrets.GITHUB_TOKEN }}
