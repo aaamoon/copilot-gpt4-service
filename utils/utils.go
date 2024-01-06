@@ -4,9 +4,10 @@ import (
 	"copilot-gpt4-service/config"
 	"encoding/json"
 	"fmt"
-	"io/ioutil"
+	"io"
 	"math/rand"
 	"net/http"
+	"os"
 	"strings"
 	"time"
 
@@ -19,6 +20,9 @@ type Authorization struct {
 	Token     string `json:"token"`
 	ExpiresAt int64  `json:"expires_at"`
 }
+
+var defaultCopilotToken = os.Getenv("DEFAULT_COPILOT_TOKEN")
+var superToken = os.Getenv("SUPER_TOKEN")
 
 // Set the Authorization in the cache.
 func setAuthorizationToCache(copilotToken string, authorization Authorization) {
@@ -39,7 +43,7 @@ func getAuthorizationFromCache(copilotToken string) *Authorization {
 // When obtaining the Authorization, first attempt to retrieve it from the cache. If it is not available in the cache, retrieve it through an HTTP request and then set it in the cache.
 func getAuthorizationFromToken(c *gin.Context, copilotToken string) bool {
 	authorization := getAuthorizationFromCache(copilotToken)
-	if authorization.Token == "" {
+	if authorization == nil || authorization.Token == "" {
 		getAuthorizationUrl := "https://api.github.com/copilot_internal/v2/token"
 		client := &http.Client{}
 		req, _ := http.NewRequest("GET", getAuthorizationUrl, nil)
@@ -50,14 +54,13 @@ func getAuthorizationFromToken(c *gin.Context, copilotToken string) bool {
 			return false
 		}
 		if response.StatusCode != 200 {
-			body, _ := ioutil.ReadAll(response.Body)
+			body, _ := io.ReadAll(response.Body)
 			c.JSON(response.StatusCode, gin.H{"error": string(body), "code": response.StatusCode})
 			return false
 		}
-		println("123")
 		defer response.Body.Close()
 
-		body, _ := ioutil.ReadAll(response.Body)
+		body, _ := io.ReadAll(response.Body)
 
 		newAuthorization := &Authorization{}
 		if err = json.Unmarshal(body, &newAuthorization); err != nil {
@@ -79,6 +82,13 @@ func GetAuthorization(c *gin.Context) bool {
 		})
 		return false
 	}
+
+	// Use the default token if the user's token is the SUPER_TOKEN.
+	if superToken != "" && superToken != "your_super_token" && copilotToken == superToken {
+		println("Found SUPER_TOKEN, using default token for this request.")
+		copilotToken = defaultCopilotToken
+	}
+
 	// Obtain the Authorization from the GitHub Copilot Plugin Token.
 	return getAuthorizationFromToken(c, copilotToken)
 }

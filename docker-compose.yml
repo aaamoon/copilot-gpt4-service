@@ -1,4 +1,4 @@
-version: '3'
+version: '3.8'
 
 services:
   copilot-gpt4-service:
@@ -9,3 +9,6 @@ services:
       - 8080:8080
     restart: unless-stopped
     container_name: copilot-gpt4-service
+    environment:
+      - DEFAULT_COPILOT_TOKEN=your_default_copilot_token
+      - SUPER_TOKEN=your_super_token
