@@ -168,7 +168,6 @@ func mainRequest(c *gin.Context) {
 					}
 
 					c.Writer.Write(rlt_body)
-					c.Writer.Flush()
 				}
 				if err == io.EOF {
 					break
