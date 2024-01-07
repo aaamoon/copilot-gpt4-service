@@ -11,14 +11,11 @@ English | <a href="README.md">简体中文</a>
 ## How to use
 1. Visit https://gpt4copilot.tech
 
-2. Enter the server API address deployed in the repository project in the set interface address: `https://gpt4copilot.tech` (**It is strongly recommended to deploy the server yourself, because it is unclear whether Github will detect that there are too many requests for different tokens from this server IP and cause risk**)
+2. Enter the server API address deployed in the repository project in the set interface address: `https://gpt4copilot.tech` (**It is strongly recommended to deploy the server yourself, because it is unclear whether GitHub will detect that there are too many requests for different tokens from this server IP and cause risk**)
 
-3. Enter your Github Copilot Plugin Token in the API Key field
+3. Enter your GitHub Copilot Plugin Token in the API Key field
 
-Three pre-registered tokens for Github Copilot accounts are available for direct use:
-- ~~**ghu_kEDPRczuQhVAxBxQD4Rkjv5uBba6zE3i0mNH**~~
-
-**If you already have a Github Copilot account, you can use your own token by obtaining it through the [copilot-token API](https://cocopilot.org/copilot/token)，Currently, due to the high number of different IP requests, the tokens I provide become invalid within half an hour. If it's for internal use within a few people, the token is generally valid for several months.**
+**If you already have a GitHub Copilot account, you can use your own token by obtaining it through the [copilot-token API](https://cocopilot.org/copilot/token)，Currently, due to the high number of different IP requests, the tokens I provide become invalid within half an hour. If it's for internal use within a few people, the token is generally valid for several months.**
 
 ![step](/assets/step1_EN.png)
 
@@ -28,8 +25,14 @@ Three pre-registered tokens for Github Copilot accounts are available for direct
 
 ## Exception HTTP response status code parsing
 
-- 401: The Github Copilot Plugin token used has expired or is incorrect, please obtain it again.
-- 403: The account you are using does not have Github Copilot activated.
+- 401: The GitHub Copilot Plugin token used has expired or is incorrect, please obtain it again.
+- 403: The account you are using does not have GitHub  Copilot activated.
+
+## Super Token
+
+In the `docker-compose.yml` file, there are two customizable environment variable fields: `SUPER_TOKEN` and `DEFAULT_COPILOT_TOKEN`. The purpose of these fields is to share the copilot-gpt4-service with friends in a more secure way: when the `API Key` in a user's request is `SUPER_TOKEN`, the copilot-gpt4-service server will handle the request using the built-in `DEFAULT_COPILOT_TOKEN`. In this way, the server maintainer only needs to share the `SUPER_TOKEN` with others, without having to share the `GitHub Copilot Plugin Token`.
+
+If `SUPER_TOKEN` does not exist or is an empty string or is the default placeholder value, this feature will not be activated.
 
 ## Self-Deployment
 
@@ -47,6 +50,8 @@ The client uses [ChatGPT-Next-Web](https://github.com/Yidadaa/ChatGPT-Next-Web),
 docker run -d \
   --name copilot-gpt4-service \
   --restart always \
+  --env SUPER_TOKEN=your_super_token \
+  --env DEFAULT_COPILOT_TOKEN=your_default_copilot_token \
   -p 8080:8080 \
   aaamoon/copilot-gpt4-service:latest
 ```
@@ -56,6 +61,7 @@ docker run -d \
 ```bash
 git clone https://github.com/aaamoon/copilot-gpt4-service && cd copilot-gpt4-service
 # You can modify the port in `docker-compose.yml`  
+# Modify environment variables in `docker-compose.yml` to enable Super Token
 docker compose up -d
 ```
 

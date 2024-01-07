@@ -12,14 +12,11 @@
 
 1、访问 https://gpt4copilot.tech
 
-2、在设置的接口地址填入本仓库项目部署出来的服务端 API 地址 `https://gpt4copilot.tech`（**强烈建议自行部署服务端，因为不清楚后续 Github 会不会检测到从该服务端 IP 发出太多不同 Token 的请求导致有风险存在**）
+2、在设置的接口地址填入本仓库项目部署出来的服务端 API 地址 `https://gpt4copilot.tech`（**强烈建议自行部署服务端，因为不清楚后续 GitHub 会不会检测到从该服务端 IP 发出太多不同 Token 的请求导致有风险存在**）
 
-3、在 API Key 中填入 Github Copilot Plugin Token
+3、在 API Key 中填入 GitHub Copilot Plugin Token
 
-提供三个已经开通了 Github Copilot 账号的 Token，可以直接使用：
-- ~~**ghu_kEDPRczuQhVAxBxQD4Rkjv5uBba6zE3i0mNH**~~
-
-**大佬们如果有开通 Github Copilot 的话，可以使用自己的 Token，通过 [copilot-token接口](https://cocopilot.org/copilot/token) 来获取，目前太多不同的IP请求了，我提供出去的 Token 半个钟就失效了，如果是内部几个人用的话，Token 有效期一般是好几个月**
+**大佬们如果有开通 GitHub Copilot 的话，可以使用自己的 Token，通过 [copilot-token接口](https://cocopilot.org/copilot/token) 来获取，目前太多不同的IP请求了，我提供出去的 Token 半个钟就失效了，如果是内部几个人用的话，Token 有效期一般是好几个月**
 
 ![步骤1](/assets/step1.png)
 
@@ -29,8 +26,16 @@
 
 ## 异常 HTTP 响应状态码解析
 
-- 401: 使用的 Github Copilot Plugin Token 过期了或者错误，请重新获取
-- 403: 使用的账号没有开通 Github Copilot
+- 401: 使用的 GitHub Copilot Plugin Token 过期了或者错误，请重新获取
+- 403: 使用的账号没有开通 GitHub Copilot'
+
+## Super Token
+
+在 `docker-compose.yml` 中存在两个可自定义的环境变量字段 `SUPER_TOKEN` 和 `DEFAULT_COPILOT_TOKEN`。这两个字段设计目的是将 copilot-gpt4-service 服务以更安全的方式分享给朋友：当用户请求的 `API Key` 为 `SUPER_TOKEN` 时，copilot-gpt4-service 服务端将调用内置的 `DEFAULT_COPILOT_TOKEN` 处理该请求。而服务端维护者只需要将 `SUPER_TOKEN` 分享给对方，而不用分享 `GitHub Copilot Plugin Token`
+
+
+
+当 `SUPER_TOKEN` 不存在，为空字串符或为默认值时，该功能不会启用
 
 ## 个人部署
 
@@ -48,6 +53,8 @@
 docker run -d \
   --name copilot-gpt4-service \
   --restart always \
+  --env SUPER_TOKEN=your_super_token \
+  --env DEFAULT_COPILOT_TOKEN=your_default_copilot_token \
   -p 8080:8080 \
   aaamoon/copilot-gpt4-service:latest
 ```
@@ -56,7 +63,8 @@ docker run -d \
 
 ```bash
 git clone https://github.com/aaamoon/copilot-gpt4-service && cd copilot-gpt4-service
-# 可以在`docker-compose.yml`中修改端口  
+# 可以在`docker-compose.yml`中修改端口
+# 如需启用 Super Token 可在`docker-compose.yml`中修改对应的变量值
 docker compose up -d
 ```
 
