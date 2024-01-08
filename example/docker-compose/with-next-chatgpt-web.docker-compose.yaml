@@ -31,5 +31,5 @@ services:
       - 3000:3000
     environment:
       - BASE_URL=http://copilot-gpt4-service:8080
-      - OPENAI_API_KEY=ghu_BlgX3IKRfmTJLPhWcf4leRbcvhNoM34dvdLA
+      - OPENAI_API_KEY={ your openai api key }
       - CODE={ your access code }
