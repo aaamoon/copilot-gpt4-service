@@ -36,6 +36,7 @@ HOST=localhost # Service listening address
 PORT=8080 # Service listening port
 CACHE=true # Whether to enable persistence
 CACHE_PATH=db/cache.sqlite3 # Path to persistent cache (only used when CACHE=true)
+DEBUG=false
 ```
 
 ### Docker Deployment

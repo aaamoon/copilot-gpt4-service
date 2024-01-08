@@ -1,17 +1,20 @@
 package main
 
 import (
+	"github.com/gin-gonic/gin"
+
 	"bufio"
 	"bytes"
-	"copilot-gpt4-service/config"
-	"copilot-gpt4-service/utils"
 	"encoding/hex"
 	"encoding/json"
 	"fmt"
+	"time"
 	"math/rand"
 	"net/http"
 
-	"github.com/gin-gonic/gin"
+	"copilot-gpt4-service/config"
+	"copilot-gpt4-service/utils"
+	"copilot-gpt4-service/log"
 )
 
 // Handle the Cross-Origin Resource Sharing (CORS) for requests.
@@ -215,9 +218,33 @@ func createMockModelsResponse(c *gin.Context) {
 	})
 }
 
+func LoggerHandler() gin.HandlerFunc {
+    return func(c *gin.Context) {
+        t := time.Now()
+
+        log.ZLog.Log.Info().Msgf("Request Info:\nMethod: %s\nHost: %s\nURL: %s",
+            c.Request.Method, c.Request.Host, c.Request.URL)
+        log.ZLog.Log.Debug().Msgf("Request Header:\n%v", c.Request.Header)
+
+        c.Next()
+
+        latency := time.Since(t)
+        log.ZLog.Log.Info().Msgf("Response Time: %s\nStatus: %s",
+            latency.String(), c.Writer.Status())
+        log.ZLog.Log.Debug().Msgf("Response Header:\n%v", c.Writer.Header())
+    }
+}
+
 func main() {
+	gin.SetMode(gin.ReleaseMode)
+	if config.ConfigInstance.Debug {
+		gin.SetMode(gin.DebugMode)
+	}
+
 	router := gin.Default()
 	router.Use(CORSMiddleware())
+	router.Use(LoggerHandler())
+
 	router.POST("/v1/chat/completions", chatCompletions)
 	router.GET("/v1/models", createMockModelsResponse)
 	router.GET("/healthz", func(context *gin.Context) {
@@ -228,6 +255,10 @@ func main() {
 	router.NoRoute(func(c *gin.Context) {
 		c.String(http.StatusMethodNotAllowed, "Method Not Allowed")
 	})
+
+	log.ZLog.Log.Info().Msgf("Cache enabled: %t, Cache path: %s, Deubg: %t", config.ConfigInstance.Cache, config.ConfigInstance.CachePath, config.ConfigInstance.Debug)
+	log.ZLog.Log.Info().Msgf("Starting server on http://%s:%s", config.ConfigInstance.Host, config.ConfigInstance.Port)
+
 	// router.Run(":8080")
 	router.Run(config.ConfigInstance.Host + ":" + config.ConfigInstance.Port)
 }

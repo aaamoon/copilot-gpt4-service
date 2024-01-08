@@ -36,6 +36,7 @@ HOST=localhost # 服务监听地址
 PORT=8080 # 服务监听端口
 CACHE=true # 是否启用持久化
 CACHE_PATH=db/cache.sqlite3 # 持久化缓存的路径（仅当 CACHE=true 时有效）
+DEBUG=false
 ```
 
 ### Docker 部署

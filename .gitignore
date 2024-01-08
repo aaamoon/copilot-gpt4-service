@@ -3,3 +3,4 @@
 config.env
 cache.sqlite3
 /db
+/logs
