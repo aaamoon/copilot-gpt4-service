@@ -7,10 +7,22 @@
 ## 快速安装
 使用`helm`命令安装`HLEM Chart`，命令如下：
 ```bash
-git clone https://github.com/aaamoon/copilot-gpt4-service.git
-# git clone git@github.com:aaamoon/copilot-gpt4-service.git
-cd copilot-gpt4-service/.chart
-helm upgrade copilot-gpt4-service . --namespace copilot-gpt4-service --create-namespace --install  
+helm repo add aaamoon https://charts.kii.la && helm repo update # 源由 github pages 提供
+helm install copilot-gpt4-service aaamoon/copilot-gpt4-service
+
+
+## 与Chat GPT Next Web一起安装
+helm install copilot-gpt4-service aaamoon/copilot-gpt4-service \
+  --set chatgpt-next-web.enabled=true \
+  --set chatgpt-next-web.config.OPENAI_API_KEY=[ your openai api key ] \ # copilot 获取的 token
+  --set chatgpt-next-web.config.CODE=[ backend access code ] \    # next gpt web ui 的访问密码
+  --set chatgpt-next-web.service.type=NodePort \
+  --set chatgpt-next-web.service.nodePort=30080
+```
+
+如需更多配置, 可自行定义 values , 然后使用 -f 指定 values 文件
+```bash
+helm install copilot-gpt4-service aaamoon/copilot-gpt4-service -f values.yaml
 ```
 
 ## Values 字段说明

@@ -1,6 +1,0 @@
-dependencies:
-- name: chatgpt-next-web
-  repository: https://charts.kii.la
-  version: 0.1.1
-digest: sha256:ea1a7a52f09b492e30db91c2e66bfa25a3db3ab878d7099daeeea94e90f33d5e
-generated: "2024-01-08T01:31:41.186129+08:00"
