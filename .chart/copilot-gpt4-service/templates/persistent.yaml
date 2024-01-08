@@ -1,0 +1,19 @@
+{{- if .Values.persistent.cache.enabled  }}
+{{- if eq .Values.persistent.cache.type "pvc" }}
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: {{ .Values.persistent.cache.pvc.claimName }}
+  labels:
+    {{- include "copilot-gpt4-service.labels" . | nindent 4 }}
+spec:
+  accessModes:
+    {{- .Values.persistent.cache.pvc.accessModes | toYaml | nindent 4 }}
+  resources:
+    requests:
+      storage: {{ .Values.persistent.cache.pvc.size | default "1Gi" }}
+  {{- with .Values.persistent.cache.pvc.storageClassName }}
+  storageClassName: {{ . }}
+  {{- end }}
+{{- end  }}
+{{- end  }}

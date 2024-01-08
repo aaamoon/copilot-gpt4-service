@@ -36,6 +36,10 @@ spec:
             {{- toYaml .Values.securityContext | nindent 12 }}
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
           imagePullPolicy: {{ .Values.image.pullPolicy }}
+          envFrom:
+            - configMapRef:
+                name: {{ include "copilot-gpt4-service.fullname" . }}
+                optional: true
           ports:
             - name: http
               containerPort: {{ .Values.service.port }}
@@ -48,15 +52,29 @@ spec:
             httpGet:
               path: /healthz
               port: http
+          {{- if .Values.persistent.cache.enabled }}
+          volumeMounts:
+            - name: {{ .Values.persistent.cache.name }}
+              mountPath: {{ .Values.persistent.cache.mountPath }}
+          {{- end }}
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
           {{- with .Values.volumeMounts }}
           volumeMounts:
             {{- toYaml . | nindent 12 }}
           {{- end }}
-      {{- with .Values.volumes }}
+      {{- if .Values.persistent.cache.enabled }}
       volumes:
-        {{- toYaml . | nindent 8 }}
+        {{- if eq .Values.persistent.cache.type "pvc" }}
+        - name: {{ .Values.persistent.cache.name }}
+          persistentVolumeClaim:
+            claimName: {{ .Values.persistent.cache.pvc.claimName }}
+        {{- else if eq .Values.persistent.cache.type "hostPath" }}
+        - name: {{ .Values.persistent.cache.name }}
+          hostPath:
+            path: {{ .Values.persistent.cache.hostPath.path }}
+            type: {{ .Values.persistent.cache.hostPath.type }}
+        {{- end }}
       {{- end }}
       {{- with .Values.nodeSelector }}
       nodeSelector:
