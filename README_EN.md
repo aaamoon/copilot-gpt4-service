@@ -69,10 +69,17 @@ git pull && docker compose up -d --build
 Supports deployment through Kubernetes, the specific deployment method is as follows:
 
 ```shell
-git clone https://github.com/aaamoon/copilot-gpt4-service.git
-# git clone git@github.com:aaamoon/copilot-gpt4-service.git
-cd copilot-gpt4-service/.chart
-helm upgrade copilot-gpt4-service . --namespace copilot-gpt4-service --create-namespace --install  
+helm repo add aaamoon https://charts.kii.la && helm repo update # Source by github pages
+helm install copilot-gpt4-service aaamoon/copilot-gpt4-service
+
+
+## Installation with Chat GPT Next Web
+helm install copilot-gpt4-service aaamoon/copilot-gpt4-service \
+  --set chatgpt-next-web.enabled=true \
+  --set chatgpt-next-web.config.OPENAI_API_KEY=[ your openai api key ] \   #Token obtained by copilot
+  --set chatgpt-next-web.config.CODE=[ backend access code ] \    # Access password for next chatgpt web ui
+  --set chatgpt-next-web.service.type=NodePort \
+  --set chatgpt-next-web.service.nodePort=30080
 ```
 
 ### Cloudflare Worker
