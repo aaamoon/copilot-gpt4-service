@@ -25,7 +25,7 @@ To use copilot-gpt4-service, you need to use it with a third-party client. The f
 
 ## Server
 
-The deployment methods for copilot-gpt4-service currently include Docker deployment, source code deployment, Kubernetes deployment, and Cloudflare Worker implementation. They are described below.
+The deployment methods for copilot-gpt4-service currently include Docker deployment, source code deployment, Kubernetes deployment, Cloudflare Worker implementation and Zeabur deployment. They are described below.
 
 ### Docker Deployment
 
@@ -67,6 +67,12 @@ helm upgrade copilot-gpt4-service . --namespace copilot-gpt4-service --create-na
 ### Cloudflare Worker
 
 Supports deployment through Cloudflare Worker, see [cf-copilot-service](https://github.com/wpv-chan/cf-copilot-service) for specific usage.
+
+### Deploy to Zeabur
+
+Click on the button below to deploy:
+
+[![Deploy on Zeabur](https://zeabur.com/button.svg)](https://zeabur.com/templates/73WZFG)
 
 ## Obtaining Copilot Token
 
