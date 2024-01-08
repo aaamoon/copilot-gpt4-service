@@ -1,0 +1,35 @@
+# 使用方法：docker-compose -f example/docker-compose/with-next-chatgpt-web.docker-compose.yaml up -d
+# 打开浏览器，访问 http://localhost:3000/#/auth
+# 输入您的访问代码并点击登录。
+
+
+# Usage: docker-compose -f example/docker-compose/with-next-chatgpt-web.docker-compose.yaml up -d
+# open your browser and visit http://localhost:3000/#/auth
+# input your access code and click login.
+version: '3'
+services:
+  copilot-gpt4-service:
+    environment:
+      - HOST=0.0.0.0
+      - PORT=8080
+      - CACHE=true
+      - CACHE_PATH=/var/copilot-gpt4-service/cache.sqlite3
+    ports:
+      - 8080:8080
+    restart: unless-stopped
+    container_name: copilot-gpt4-service
+    image: aaamoon/copilot-gpt4-service:latest
+    volumes:
+      - ~/.cache/copilot-gpt4-service-cache:/var/copilot-gpt4-service
+  chatgpt-next-web:
+    image: yidadaa/chatgpt-next-web:latest
+    container_name: chatgpt-next-web
+    restart: unless-stopped
+    depends_on:
+      - copilot-gpt4-service
+    ports:
+      - 3000:3000
+    environment:
+      - BASE_URL=http://copilot-gpt4-service:8080
+      - OPENAI_API_KEY=ghu_BlgX3IKRfmTJLPhWcf4leRbcvhNoM34dvdLA
+      - CODE={ your access code }
