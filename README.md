@@ -25,7 +25,7 @@
 
 ## 服务端
 
-copilot-gpt4-service 服务的部署方式目前包含 Docker 部署、源码部署、Kubernetes 部署、Cloudflare Worker 实现，下面分别介绍。
+copilot-gpt4-service 服务的部署方式目前包含 Docker 部署、源码部署、Kubernetes 部署、Cloudflare Worker 实现、Zeabur 部署，下面分别介绍。
 
 ### 配置方式
 
@@ -78,6 +78,12 @@ helm upgrade copilot-gpt4-service . --namespace copilot-gpt4-service --create-na
 ### Cloudflare Worker
 
 支持通过 Cloudflare Worker 部署，具体使用方式见 [cf-copilot-service](https://github.com/wpv-chan/cf-copilot-service)。
+
+### Zeabur 部署
+
+点击下方按钮一键部署：
+
+[![Deploy on Zeabur](https://zeabur.com/button.svg)](https://zeabur.com/templates/73WZFG)
 
 ## 获取 Copilot Token
 
