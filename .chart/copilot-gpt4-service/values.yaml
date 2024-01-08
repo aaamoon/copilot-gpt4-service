@@ -6,13 +6,34 @@ replicaCount: 1
 
 image:
   repository: aaamoon/copilot-gpt4-service
-  pullPolicy: IfNotPresent
+  pullPolicy: Always
   # Overrides the image tag whose default is the chart appVersion.
   tag: latest
 
-imagePullSecrets: []
+config:
+  HOST: 0.0.0.0
+  PORT: 8080
+
+
+persistent:
+  cache:
+    enabled: false # true or false
+    type: pvc # pvc or hostPath
+    name: cache
+    mountPath: /var/copilot-gpt4-service/cache.sqlite3
+    pvc: # if type is pvc
+      storageClassName: "" # if empty use default storage class
+      claimName: copilot-gpt4-service-cache
+      accessModes:
+        - ReadWriteOnce
+      size: 1Gi
+    hostPath: # if type is hostPath
+      path: /var/copilot-gpt4-service/cache.sqlite3
+      type: DirectoryOrCreate
+
+imagePullSecrets: [ ]
 nameOverride: ""
-fullnameOverride: ""
+fullnameOverride: "copilot-gpt4-service"
 
 serviceAccount:
   # Specifies whether a service account should be created
@@ -20,24 +41,24 @@ serviceAccount:
   # Automatically mount a ServiceAccount's API credentials?
   automount: true
   # Annotations to add to the service account
-  annotations: {}
+  annotations: { }
   # The name of the service account to use.
   # If not set and create is true, a name is generated using the fullname template
   name: ""
 
-podAnnotations: {}
-podLabels: {}
+podAnnotations: { }
+podLabels: { }
 
-podSecurityContext: {}
-  # fsGroup: 2000
+podSecurityContext: { }
+# fsGroup: 2000
 
-securityContext: {}
-  # capabilities:
-  #   drop:
-  #   - ALL
-  # readOnlyRootFilesystem: true
-  # runAsNonRoot: true
-  # runAsUser: 1000
+securityContext: { }
+# capabilities:
+#   drop:
+#   - ALL
+# readOnlyRootFilesystem: true
+# runAsNonRoot: true
+# runAsUser: 1000
 
 service:
   type: ClusterIP
@@ -45,31 +66,28 @@ service:
 
 ingress:
   enabled: false
-  className: ""
-  annotations: {}
-    # kubernetes.io/ingress.class: nginx
-    # kubernetes.io/tls-acme: "true"
+  className: "nginx"
+  annotations: { }
+  #    cert-manager.io/cluster-issuer: letsencrypt-prod
+  #    kubernetes.io/tls-acme: "true"
   hosts:
-    - host: chart-example.local
+    - host: example.com
       paths:
         - path: /
           pathType: ImplementationSpecific
-  tls: []
-  #  - secretName: chart-example-tls
-  #    hosts:
-  #      - chart-example.local
+  tls: [ ]
 
-resources: {}
-  # We usually recommend not to specify default resources and to leave this as a conscious
-  # choice for the user. This also increases chances charts run on environments with little
-  # resources, such as Minikube. If you do want to specify resources, uncomment the following
-  # lines, adjust them as necessary, and remove the curly braces after 'resources:'.
-  # limits:
-  #   cpu: 100m
-  #   memory: 128Mi
-  # requests:
-  #   cpu: 100m
-  #   memory: 128Mi
+resources: { }
+# We usually recommend not to specify default resources and to leave this as a conscious
+# choice for the user. This also increases chances charts run on environments with little
+# resources, such as Minikube. If you do want to specify resources, uncomment the following
+# lines, adjust them as necessary, and remove the curly braces after 'resources:'.
+# limits:
+#   cpu: 100m
+#   memory: 128Mi
+# requests:
+#   cpu: 100m
+#   memory: 128Mi
 
 autoscaling:
   enabled: false
@@ -78,21 +96,25 @@ autoscaling:
   targetCPUUtilizationPercentage: 80
   # targetMemoryUtilizationPercentage: 80
 
-# Additional volumes on the output Deployment definition.
-volumes: []
-# - name: foo
-#   secret:
-#     secretName: mysecret
-#     optional: false
 
 # Additional volumeMounts on the output Deployment definition.
-volumeMounts: []
+volumeMounts: [ ]
 # - name: foo
 #   mountPath: "/etc/foo"
 #   readOnly: true
 
-nodeSelector: {}
+nodeSelector: { }
 
-tolerations: []
+tolerations: [ ]
 
-affinity: {}
+affinity: { }
+
+chatgpt-next-web:
+  enabled: false
+  config:
+    BASE_URL: http://copilot-gpt4-service:8080 # if you want to use copilot-gpt4-service
+    OPENAI_API_KEY: [ your openai api key ]
+    CODE: [ backend access code ]
+    #  AZURE_URL: https://[your azure api url] # if you want to use azure api
+    #  AZURE_API_VERSION: 2023-08-01-preview # if you want to use azure api
+    #  AZURE_API_KEY: [your azure api key] # if you want to use azure api

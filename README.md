@@ -69,10 +69,17 @@ git pull && docker compose up -d --build
 支持通过 Kubernetes 部署，具体部署方式如下：
 
 ```shell
-git clone https://github.com/aaamoon/copilot-gpt4-service.git
-# git clone git@github.com:aaamoon/copilot-gpt4-service.git
-cd copilot-gpt4-service/.chart
-helm upgrade copilot-gpt4-service . --namespace copilot-gpt4-service --create-namespace --install  
+helm repo add aaamoon https://charts.kii.la && helm repo update # 源由 github pages 提供
+helm install copilot-gpt4-service aaamoon/copilot-gpt4-service
+
+
+## 与Chat GPT Next Web一起安装
+helm install copilot-gpt4-service aaamoon/copilot-gpt4-service \
+  --set chatgpt-next-web.enabled=true \
+  --set chatgpt-next-web.config.OPENAI_API_KEY=[ your openai api key ] \ # copilot 获取的 token
+  --set chatgpt-next-web.config.CODE=[ backend access code ] \    # next gpt web ui 的访问密码
+  --set chatgpt-next-web.service.type=NodePort \
+  --set chatgpt-next-web.service.nodePort=30080
 ```
 
 ### Cloudflare Worker
